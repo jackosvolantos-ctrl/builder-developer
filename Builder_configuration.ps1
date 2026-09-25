@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   TypeScript Master Architect Generator pro Copilot Workspace
   Verze 4.0 - Emerald Dark Theme (podle reference)
@@ -2962,6 +2962,48 @@ $script:helpDetailSets += @{
         'Plus: V editoru se objeví jako spustitelný prompt, snadno se kopíruje.'
         'Pozor: Přidá do výstupu další soubor nad rámec zvoleného formátu.'
     ) -join "`n"
+    'Struktura repozitáře' = @(
+        'Co to je: Konkrétní strom složek podle zvolené architektury a frameworku.'
+        'Kdy zvolit: Vždy - agent pak umísťuje soubory na správné místo.'
+        'Plus: Odstraňuje dohadování, kam který soubor patří.'
+        'Pozor: Pokud se skutečná struktura liší, sjednoť ji nebo sekci uprav.'
+    ) -join "`n"
+    'Workflow příklady (formulář, API, komponenta)' = @(
+        'Co to je: Postup krok za krokem pro opakující se úlohy.'
+        'Kdy zvolit: Agent dělá stejné činnosti často a chcete jednotný postup.'
+        'Plus: Nejlepší obrana proti nedodržení konvencí - obsahuje i postup u bezpečnostní chyby.'
+        'Pozor: Delší instrukce, ale nahrazuje mnoho vysvětlování v každém zadání.'
+    ) -join "`n"
+    'Anti-patterns (co nikdy nedělat)' = @(
+        'Co to je: Zakázané vzory s ukázkou špatně a správně.'
+        'Kdy zvolit: Tým dělá opakující se chyby, které je nutné vymýtit.'
+        'Plus: Konkrétní ukázky kódu fungují lépe než obecná pravidla.'
+        'Pozor: Ukázky je nutné udržovat v souladu se skutečným stackem.'
+    ) -join "`n"
+    'Kontrolní seznam pro code review' = @(
+        'Co to je: Seznam bodů k odškrtnutí u každé změny.'
+        'Kdy zvolit: Chceš jednotnou úroveň kontroly a méně přehlédnutých chyb.'
+        'Plus: Zahrnuje i oblasti podle zvolených modulů (osobní údaje, webhooky).'
+        'Pozor: Dlouhý seznam se snadno přestane používat - drž ho krátký.'
+    ) -join "`n"
+    'PROJECT_PLAN.md (fáze vývoje)' = @(
+        'Co to je: Plán projektu rozdělený do fází s odškrtávacími body.'
+        'Kdy zvolit: Chceš agentovi dát pořadí, v jakém má funkce stavět.'
+        'Plus: Agent díky tomu nestaví funkce v nesprávném pořadí.'
+        'Pozor: Plán je potřeba průběžně aktualizovat, jinak zastará.'
+    ) -join "`n"
+    '.agentic/manifest.json (strojový kontext)' = @(
+        'Co to je: Strojově čitelný soubor s projektem, stackem a pravidly.'
+        'Kdy zvolit: Používáš více nástrojů nebo nástroje čtoucí manifest.'
+        'Plus: Kontext pro programy, ne jen pro lidi - snadné automatické zpracování.'
+        'Pozor: Není standard všech nástrojů, ber ho jako doplněk k instrukcím.'
+    ) -join "`n"
+    'CONTRIBUTING.md (postup přispívání)' = @(
+        'Co to je: Postup větvení, pull requestu a konvencí commitů.'
+        'Kdy zvolit: V projektu pracuje více lidí nebo externí přispěvatelé.'
+        'Plus: Snižuje počet dotazů a sjednocuje kvalitu příspěvků.'
+        'Pozor: Musí odpovídat skutečnému procesu, ne přání.'
+    ) -join "`n"
     'Před aplikací vyčistit doporučené skupiny' = @(
         'Co to je: Než se preset aplikuje, odznačí všechny volby ve skupinách, kterých se týká.'
         'Kdy zvolit: Chceš čistý start podle šablony bez zbytků předchozích výběrů.'
@@ -3401,7 +3443,7 @@ $navItems = @(
     @("⚡", "Presety"),
     @("⌘", "Architektura"), @("</>", "Frontend"), @("▤", "Backend"), @("☁", "DevOps"),
     @("♢", "Bezpečnost"), @("✚", "Funkce"), @("▯", "Mobil"), @("◇", "Moduly"),
-    @("◆", "Skills"), @("✓", "Chování"), @("▱", "Slovník")
+    @("◆", "Skills"), @("✓", "Chování"), @("◈", "Projekt"), @("▱", "Slovník")
 )
 for ($i = $navItems.Count - 1; $i -ge 0; $i--) {
     $button = New-Object System.Windows.Forms.Button
@@ -3592,6 +3634,7 @@ $tab7 = New-ReferencePage "Mobil"
 $tab8 = New-ReferencePage "Moduly"
 $tabSkills = New-ReferencePage "Skills"
 $tab10 = New-ReferencePage "Chování"
+$tabProject = New-ReferencePage "Projekt"
 $tab9 = New-ReferencePage "Slovník"
 
 $txtProjectName = New-Object System.Windows.Forms.TextBox
@@ -3675,6 +3718,10 @@ $cSecurityBehavior = Add-CheckGroup $tab10 "Zabezpečení (obecné)" @("Ověřuj
 $cAccessibility = Add-CheckGroup $tab10 "Přístupnost" @("Sémantické HTML", "Alternativní text u obrázků", "Navigace klávesnicí", "Štítky ARIA", "Přístupné formuláře", "Přístupná média a alt texty", "Kontrast a vizuální přístupnost") 0 480 440 200
 $cPerformance = Add-CheckGroup $tab10 "Výkon" @("Lint pravidla pro výkon", "Memoizace", "Vyhněte se N+1 dotazům", "Velikost svazku") 460 480 440 200
 $tab10.AutoScrollMinSize = New-Object System.Drawing.Size(1400, 780)
+
+# ---- Tab Projekt: doplňkové soubory a sekce pro agenta ----
+$cProjectDocs = Add-CheckGroup $tabProject "Doplňky do instrukcí" @("Struktura repozitáře", "Workflow příklady (formulář, API, komponenta)", "Anti-patterns (co nikdy nedělat)", "Kontrolní seznam pro code review") 0 0 440 260
+$cProjectFiles = Add-CheckGroup $tabProject "Samostatné soubory" @("PROJECT_PLAN.md (fáze vývoje)", ".agentic/manifest.json (strojový kontext)", "CONTRIBUTING.md (postup přispívání)") 460 0 440 260
 
 # ---- Tab Skills: vyber skillu a format vystupu (konsolidovane soubory) ----
 $rSkillOutput = Add-RadioGroup $tabSkills "Formát výstupu" @("Konsolidovaný (instrukce + agent + setup)", "Rozšířený (+ skills a agent-task)", "Jen instrukce") 0 0 440 200
@@ -4601,6 +4648,33 @@ $btnOk.Add_Click({
         return (@($controls | Where-Object { $_.Text -eq $label -and $_.Checked }).Count -gt 0)
     }
 
+    # --- Pomocné funkce pro skládání obsahu (musí být před prvním použitím) ---
+    # Uvodni H1 bloku snizi na H2, aby v jednom souboru byla jen jedna hlavicka
+    Function As-Section([string]$text) {
+        if ([string]::IsNullOrWhiteSpace($text)) { return "" }
+        return [regex]::Replace($text.Trim(), '(?m)^# ', '## ', 1)
+    }
+
+    # Nevyplnene volby zcitelni
+    Function Polish([string]$text) {
+        $r = $text -replace 'Nespecifikováno — Nespecifikováno', 'neuvedeno'
+        $r = $r -replace 'Nespecifikováno', 'neuvedeno'
+        return $r
+    }
+
+    # Slouci dve hodnoty jen kdyz jsou obe vyplnene (jinak vrati jen vyplnenou)
+    Function StackPair($a, $b) {
+        $aOk = ($a -and $a -notmatch 'neuvedeno|Nespecifikováno')
+        $bOk = ($b -and $b -notmatch 'neuvedeno|Nespecifikováno')
+        if ($aOk -and $bOk) { return "$a + $b" }
+        if ($aOk) { return $a }
+        if ($bOk) { return $b }
+        return "neuvedeno"
+    }
+
+    # Rada, jak cist nevyplnena pole
+    $unspecifiedNote = "> Hodnoty označené ``neuvedeno`` nebyly při generování vybrány. Doplň je podle kontextu, nebo se na ně zeptej - nedomýšlej si je."
+
     $vals = @{
         Arch = Get-Radio $rArch; Render = Get-Radio $rRender; Design = Get-Radio $rDesign
         ArchType = Get-Radio $rArchType; Target = Get-Radio $rTarget
@@ -4722,11 +4796,14 @@ $btnOk.Add_Click({
 "@
     }
     
+    # Mobilni sekce se zahrne jen kdyz je opravdu zvolena mobilni platforma
+    $mobileChosen = ($vals.Mobile -match "React Native|Flutter|Capacitor")
+
     $mobileSection = ""
-    if ($vals.Mobile -notmatch "Žádná|PWA") {
+    if ($mobileChosen) {
         $mobileSection = @"
 
-## 7. Mobilní aplikace
+# Mobilní aplikace
 * **Platforma:** $($vals.Mobile)
 * **Distribuce:** $($vals.MobileDeploy)
 * **Navigace:** $($vals.MobileNav)
@@ -4943,7 +5020,7 @@ Jsi v kontextu moderního, enterprise-ready projektu. Následující direktivy d
 **Kritické pravidlo pro UI:** UI komponenty nesmí obsahovat "hardcoded" texty. Veškerý textový obsah musí být načítán dynamicky.
 
 ## 3. Tech Stack
-* **Frontend:** $($vals.Fe) + $($vals.Css)
+* **Frontend:** $(StackPair $vals.Fe $vals.Css)
 * **Design System & Vibe:** $($vals.Design)
 * **State Management:** $($vals.State)
 * **Formuláře a validace:** $($vals.Forms)
@@ -5002,7 +5079,6 @@ $($lists.Ai)
 
 **Frontend UI utility:**
 $($lists.FeUi)
-$($mobileSection)
 $($neonSection)
 $($supabaseSection)
 $($vercelSection)
@@ -5302,6 +5378,13 @@ $(Get-BehaviorBullets $lists.Performance)
     $incSummary   = Test-Checked $cSkillFrontMatter "Souhrnná tabulka skills"
     $incTaskInDoc = Test-Checked $cSkillFrontMatter "Úkolový prompt v instrukcích"
     $incTaskFile  = Test-Checked $cSkillFrontMatter "Úkolový prompt jako samostatný soubor"
+    $incRepoStructure   = Test-Checked $cProjectDocs "Struktura repozitáře"
+    $incWorkflow        = Test-Checked $cProjectDocs "Workflow příklady (formulář, API, komponenta)"
+    $incAntiPatterns    = Test-Checked $cProjectDocs "Anti-patterns (co nikdy nedělat)"
+    $incReviewChecklist = Test-Checked $cProjectDocs "Kontrolní seznam pro code review"
+    $incProjectPlan     = Test-Checked $cProjectFiles "PROJECT_PLAN.md (fáze vývoje)"
+    $incManifest        = Test-Checked $cProjectFiles ".agentic/manifest.json (strojový kontext)"
+    $incContributing    = Test-Checked $cProjectFiles "CONTRIBUTING.md (postup přispívání)"
 
     # ==========================================
     # ÚKOLOVÝ PROMPT
@@ -5332,9 +5415,260 @@ $(Get-BehaviorBullets $lists.Performance)
         return "### $title`n`n" + ($parts -join "`n")
     }
 
+    # ==========================================
+    # DOPLŇKY PROJEKTU
+    # Struktura repozitáře, workflow příklady, anti-patterns, plán a strojový manifest.
+    # ==========================================
+    # Struktura repozitare podle architektury a frameworku
+    Function Get-RepoStructure {
+        $isMonorepo = ($vals.Arch -match "monorepo|workspaces|Turborepo|Nx")
+        $isNext = ($vals.Fe -match "Next\.js")
+        $isNuxt = ($vals.Fe -match "Nuxt")
+        $isVue = ($vals.Fe -match "Vue|Nuxt")
+        if ($isMonorepo) {
+            $tree = @"
+``````
+.
+├── apps/
+│   ├── web/                     # veřejná aplikace
+│   ├── admin/                   # administrace
+│   └── mobile/                  # mobilní aplikace (pokud je zvolena)
+├── packages/
+│   ├── shared-types/            # typy sdílené mezi aplikacemi
+│   ├── ui/                      # sdílené UI komponenty
+│   └── config/                  # sdílená konfigurace (eslint, tsconfig)
+├── .github/
+│   ├── copilot-instructions.md
+│   ├── workflows/
+│   └── skills/
+└── package.json
+``````
+"@
+        } elseif ($isNext) {
+            $tree = @"
+``````
+src/
+├── app/                         # App Router
+│   ├── layout.tsx               # root layout
+│   ├── page.tsx                 # homepage
+│   ├── (auth)/                  # skupina chráněných rout
+│   ├── api/                     # route handlers
+│   └── globals.css
+├── components/
+│   ├── ui/                      # základní komponenty (Shadcn)
+│   ├── forms/                   # formuláře
+│   └── layout/                  # hlavička, patička, navigace
+├── lib/                         # pomocné funkce (db, auth, utils)
+├── schemas/                     # validační schémata (Zod)
+├── actions/                     # Server Actions
+├── types/                       # sdílené typy
+└── __tests__/                   # testy vedle kódu nebo zde
+``````
+"@
+        } elseif ($isVue -or $isNuxt) {
+            $tree = @"
+``````
+src/
+├── pages/                       # souborové routování
+├── components/
+│   ├── ui/                      # základní komponenty
+│   └── forms/                   # formuláře
+├── composables/                 # znovupoužitelná logika
+├── stores/                      # stav aplikace
+├── schemas/                     # validační schémata
+├── types/                       # sdílené typy
+└── __tests__/
+``````
+"@
+        } else {
+            $tree = @"
+``````
+src/
+├── components/
+│   ├── ui/                      # základní komponenty
+│   ├── forms/                   # formuláře
+│   └── layout/                  # rozložení stránky
+├── lib/                         # pomocné funkce
+├── schemas/                     # validační schémata
+├── services/                    # přístup k datům a API
+├── types/                       # sdílené typy
+└── __tests__/
+``````
+"@
+        }
+        return @"
+## Struktura repozitáře
+
+Uspořádej kód takto. Nové soubory umísťuj na místo, které odpovídá jejich odpovědnosti.
+
+$tree
+
+**Pravidla pro umístění:**
+- Komponenta, která se používá na více místech, patří do ``components/ui`` nebo ``components``.
+- Přímý přístup k databázi nikdy nepatří do komponenty - použij vrstvu služeb nebo akci.
+- Validační schéma patří do ``schemas`` a používá se na klientu i serveru.
+"@
+    }
+
+    # Workflow pro konkretni scenare
+    Function Get-WorkflowExamples {
+        $hasValidation = ($vals.Forms -match "Zod")
+        $stateMgmt = $vals.State
+        $apiStyle = $vals.ApiDesign
+        $example = @"
+## Workflow pro typové úlohy
+
+Konkrétní postup pro činnosti, které budeš dělat opakovaně.
+
+### Nový formulář
+1. Vytvoř schéma: ``schemas/<nazev>.ts``.
+$(if ($hasValidation) { "2. Použij ho na klientu i serveru - jedno schéma, jedna pravda." } else { "2. Validuj vstup na serveru, klientská validace je jen pro pohodlí uživatele." })
+3. Komponentu umísti do ``components/forms/<NazevForm.tsx>``.
+4. Přidej test: platná data projdou, neplatná vrátí chybu u konkrétního pole.
+5. Ošetři stav odesílání, aby se formulář neodeslal dvakrát.
+
+### Nový API endpoint
+1. Zvol metodu podle významu (GET čte, POST vytváří, PATCH mění, DELETE maže).
+2. Validuj vstup na hranici API a vracej stav 400 s popisem konkrétního pole.
+3. Ověř oprávnění **na serveru**, nikdy podle údaje z klienta.
+4. Chybu zaloguj s korelačním ID a vrať srozumitelnou odpověď bez interních detailů.
+5. Napiš test včetně chybových stavů.
+
+### Nová komponenta
+1. Rozhodni, zda jde o prezentační komponentu, nebo obal s logikou.
+2. Drž ji malou - jedna odpovědnost.
+3. Texty nepiš přímo do komponenty.
+4. Zkontroluj ovládání klávesnicí a kontrast.
+5. Pokud jde o obecně použitelnou komponentu, přidej ji do ``components/ui``.
+
+### Nalezená bezpečnostní chyba
+1. **Nezveřejňuj** detail zranitelnosti v commitu ani v popisu pull requestu.
+2. Oprav ji v samostatné větvi a v samostatném pull requestu.
+3. Přidej regresní test, který selže před opravou a projde po ní.
+4. Ověř, zda stejná chyba není i jinde.
+5. Uveď dopad a doporučený postup v soukromém kanálu, ne ve veřejném issue.
+
+### Změna databázového schématu
+1. Napiš migraci - nikdy needituj databázi ručně.
+2. Drž migraci zpětně kompatibilní (přidej sloupec, počkej, teprve pak odeber).
+3. Otestuj na kopii produkčních dat.
+4. Připrav postup návratu.
+"@
+        return $example
+    }
+
+    # Anti-patterns podle stacku
+    Function Get-AntiPatterns {
+        $fence = [string]::new([char]96, 3)
+        $badGood = @()
+        $badGood += @"
+### 1. Texty napevno v komponentě
+
+$fence
+// ŠPATNĚ - text nejde přeložit ani upravit bez zásahu do kódu
+<h1>Moje aplikace</h1>
+
+// SPRÁVNĚ - text pochází ze slovníku
+<h1>{t('header.title')}</h1>
+$fence
+"@
+        $badGood += @"
+### 2. Přímý přístup k databázi z komponenty
+
+$fence
+// ŠPATNĚ - komponenta obchází vrstvy a obchází kontrolu oprávnění
+const data = await db.query('SELECT * FROM users')
+
+// SPRÁVNĚ - přístup jde přes serverovou vrstvu
+const data = await getUsers()
+$fence
+"@
+        $badGood += @"
+### 3. Tajemství v klientském kódu
+
+$fence
+# ŠPATNĚ - cokoli s předponou NEXT_PUBLIC_ nebo VITE_ je veřejné!
+NEXT_PUBLIC_API_KEY=sk_live_xxxxx
+
+# SPRÁVNĚ - veřejná je jen adresa, klíč zůstává na serveru
+NEXT_PUBLIC_API_URL=https://api.example.com
+PRIVATE_API_KEY=sk_live_xxxxx
+$fence
+"@
+        $badGood += @"
+### 4. Obcházení typového systému
+
+$fence
+// ŠPATNĚ - přetypováním ztratíš kontrolu
+const user = data as any
+
+// SPRÁVNĚ - ověř tvar dat, dokud nejsou ověřená
+const user = userSchema.parse(data)
+$fence
+"@
+        $badGood += @"
+### 5. Ověřování oprávnění na klientu
+
+$fence
+// ŠPATNĚ - uživatel si roli přepíše v prohlížeči
+if (user.role === 'admin') { deleteUser(id) }
+
+// SPRÁVNĚ - rozhoduje server, klient jen skrývá UI
+await deleteUser(id) // uvnitř si server ověří roli
+$fence
+"@
+        $badGood += @"
+### 6. Nejdřívější návrat přes hluboké podmínky
+
+$fence
+// ŠPATNĚ - hluboké zanoření se špatně čte
+function render(user) {
+  if (user) {
+    if (user.active) {
+      if (user.email) {
+        return user.email
+      }
+    }
+  }
+}
+
+// SPRÁVNĚ - okrajové stavy vyřeš hned na začátku
+function render(user) {
+  if (!user || !user.active || !user.email) return null
+  return user.email
+}
+$fence
+"@
+        return "## Anti-patterns: co nikdy nedělat`n`nToto jsou zakázané vzory. Když je v kódu najdeš, oprav je.`n`n" + ($badGood -join "`n")
+    }
+
+    # Kontrolni seznam pro code review
+    Function Get-ReviewChecklist {
+        $items = @(
+            "Kód řeší zadání a nic víc."
+            "Nejsou přidány nedeklarované závislosti."
+            "Veškerý vstup je validován na serveru."
+            "Oprávnění se ověřuje na serveru, ne podle údaje z klienta."
+            "V kódu ani v konfiguraci nejsou tajemství."
+            "Chyby se logují a nevracejí se interní detaily."
+            "Texty nejsou napevno v komponentách."
+            "Nové chování pokrývá test."
+            "Testy procházejí a lint i typová kontrola jsou zelené."
+            "Nejsou provedeny nesouvisející změny."
+            "Zmíněny dopady a případná migrace."
+            "Struktura souborů odpovídá konvenci projektu."
+        )
+        if ($lists.Legal -notmatch "Není vyžadováno") { $items += "Zmíněny dopady na osobní údaje a jejich retenci." }
+        if ($lists.Integrations -notmatch "Není vyžadováno") { $items += "Webhooky a externí volání jsou idempotentní." }
+        $md = @("## Kontrolní seznam pro code review", "", "Projdi tyto body u každé změny před mergem.", "")
+        foreach ($i in $items) { $md += "- [ ] $i" }
+        return ($md -join "`n")
+    }
+
+    # Ukolovy prompt: role a konkretni ukoly pro agenta
     Function Get-TaskPrompt {
         $role = Get-RoleName $vals.AppDomain
-        $hasMobile = ($vals.Mobile -notmatch "Žádná|PWA|Nespecifikováno")
+        $hasMobile = $mobileChosen
         $sections = @()
         $sections += Get-TaskSection "Doménové funkce" @($lists.Ecommerce, $lists.Booking, $lists.Saas, $lists.Lms, $lists.Crm)
         $sections += Get-TaskSection "Aplikace, správa a obsah" @($lists.Admin, $lists.Core, $lists.Ai)
@@ -5352,7 +5686,7 @@ $(Get-BehaviorBullets $lists.Performance)
             "* **Doména:** $($vals.AppDomain)"
             "* **Architektura:** $($vals.Arch) — $($vals.ArchType)"
             "* **Rendering:** $($vals.Render)"
-            "* **Frontend:** $($vals.Fe) + $($vals.Css)"
+            "* **Frontend:** $(StackPair $vals.Fe $vals.Css)"
             "* **Backend:** $($vals.Be)"
             "* **Databáze:** $($vals.DbStrategy) + $($vals.Orm)"
             "* **Autentizace:** $($vals.AuthType)"
@@ -5415,19 +5749,6 @@ $taskBody
         return $py
     }
     $fence = [string]::new([char]96, 3)
-
-    # Uvodni H1 bloku snizi na H2, aby v jednom souboru byla jen jedna hlavicka
-    Function As-Section([string]$text) {
-        if ([string]::IsNullOrWhiteSpace($text)) { return "" }
-        return [regex]::Replace($text.Trim(), '(?m)^# ', '## ', 1)
-    }
-
-    # Nevyplnene volby zcitelni a slouci opakovani
-    Function Polish([string]$text) {
-        $r = $text -replace 'Nespecifikováno — Nespecifikováno', 'neuvedeno'
-        $r = $r -replace 'Nespecifikováno', 'neuvedeno'
-        return $r
-    }
 
     # ==========================================
     # SLOUČENÍ MÍSTO PŘEPSÁNÍ
@@ -5514,7 +5835,7 @@ $(if ($incSummary) { "### Přehled`n`n$skillsSummaryTable`n" })
 ## Agent Task
 
 ### Cíl
-Doplňovat a udržovat projekt podle specifikace výše: **$($vals.AppDomain)** postavená nad $($vals.Fe), $($vals.Be) a $($vals.DbStrategy).
+Doplňovat a udržovat projekt podle specifikace výše: **$($vals.AppDomain)** postavená nad $(StackPair $vals.Fe $vals.Be) a $($vals.DbStrategy).
 
 ### Rozsah práce
 - Dodržuj architekturu, tech stack a databázová pravidla z tohoto souboru, případně z ``.github/skills/SKILL.md``.
@@ -5555,7 +5876,7 @@ Soubor leží v kořeni repozitáře; agent použije nejbližší ``AGENTS.md`` 
 ## Přehled projektu
 * **Architektura:** $($vals.Arch) — $($vals.ArchType)
 * **Cílové platformy:** $($vals.Target)
-* **Frontend:** $($vals.Fe) + $($vals.Css)
+* **Frontend:** $(StackPair $vals.Fe $vals.Css)
 * **Backend:** $($vals.Be)
 * **Databáze:** $($vals.DbStrategy)
 * **Doména:** $($vals.AppDomain)
@@ -5718,7 +6039,7 @@ $(if ($usePnpm) { "      - name: Setup pnpm`n        uses: pnpm/action-setup@v4`
         run: $(if ($usePnpm) { 'pnpm test' } else { 'npm test' })
 "@
         }
-        return $header + $body
+        return ($header.TrimEnd() + "`n" + $body)
     }
 
     # --- agent-task.agent.md ---
@@ -5738,7 +6059,7 @@ Samostatný agent pro plnění zadaných úloh v tomto repozitáři. Pracuje pod
 ## Kontext projektu
 * **Doména:** $($vals.AppDomain)
 * **Architektura:** $($vals.Arch) — $($vals.ArchType)
-* **Frontend:** $($vals.Fe) + $($vals.Css)
+* **Frontend:** $(StackPair $vals.Fe $vals.Css)
 * **Backend:** $($vals.Be)
 * **Databáze:** $($vals.DbStrategy)
 
@@ -5796,11 +6117,13 @@ Tento soubor je vždy aktivní repozitářový kontext pro GitHub Copilot (Chat,
 * **Rendering strategie:** $($vals.Render)
 * **Cílové platformy:** $($vals.Target)
 * **Design systém a vibe:** $($vals.Design)
-* **Frontend:** $($vals.Fe) + $($vals.Css)
+* **Frontend:** $(StackPair $vals.Fe $vals.Css)
 * **Backend:** $($vals.Be)
 * **Databáze:** $($vals.DbStrategy)
 * **Doména:** $($vals.AppDomain)
 * **Nasazení:** $($vals.Deploy)
+
+$unspecifiedNote
 
 ---
 
@@ -5817,7 +6140,7 @@ $(As-Section $dbDoc)
 ---
 
 $(As-Section $behaviorDoc)
-$(if ($hasSpecialized -or ($vals.AppDomain -notmatch "Obecná|Portfolio")) { "`n---`n`n$(As-Section $specializationDoc)`n" })$(if ($vals.Mobile -notmatch "Žádná|PWA") { "`n---`n`n$(As-Section $mobileSection)`n" })
+$(if ($hasSpecialized -or ($vals.AppDomain -notmatch "Obecná|Portfolio")) { "`n---`n`n$(As-Section $specializationDoc)`n" })$(if ($mobileChosen) { "`n---`n`n$(As-Section $mobileSection)`n" })
 ---
 
 $skillsSection
@@ -5825,7 +6148,7 @@ $skillsSection
 ---
 
 $agentTaskSection
-$(if ($incTaskInDoc) { "`n---`n`n$(Get-TaskPrompt)`n" })
+$(if ($incTaskInDoc) { "`n---`n`n$(Get-TaskPrompt)`n" })$(if ($incRepoStructure) { "`n---`n`n$(Get-RepoStructure)`n" })$(if ($incWorkflow) { "`n---`n`n$(Get-WorkflowExamples)`n" })$(if ($incAntiPatterns) { "`n---`n`n$(Get-AntiPatterns)`n" })$(if ($incReviewChecklist) { "`n---`n`n$(Get-ReviewChecklist)`n" })
 
 ---
 
@@ -5880,6 +6203,76 @@ $(if ($incTaskFile) { "* ``.github/prompts/agent-task.prompt.md`` — úkolový 
         ) -join "`n"
         [void](Write-MergedFile (Join-Path $promptsDir "$promptSlug.prompt.md") ($promptFm + (Get-TaskPrompt)) $false)
         $writtenFiles += ".github/prompts/$promptSlug.prompt.md"
+    }
+
+    # ---- Samostatné projektové soubory (volitelné) ----
+    if ($incProjectPlan) {
+        $bullets = New-Object System.Collections.ArrayList
+        [void]$bullets.Add("### Fáze 1: Základy")
+        foreach ($x in @("- [ ] Nastavit repozitář, závislosti a CI", "- [ ] Připravit datové schéma a migrace", "- [ ] Zprovoznit autentizaci ($($vals.AuthType))", "- [ ] Vytvořit základní layout a navigaci")) { [void]$bullets.Add($x) }
+        if ($lists.Admin -notmatch "Není vyžadováno") {
+            [void]$bullets.Add("")
+            [void]$bullets.Add("### Fáze 2: Administrace")
+            foreach ($x in @("- [ ] Dashboard s přehledem", "- [ ] Správa uživatelů a rolí", "- [ ] Auditní log")) { [void]$bullets.Add($x) }
+        }
+        if (($lists.Ecommerce + $lists.Booking + $lists.Saas + $lists.Lms + $lists.Crm) -notmatch "Není vyžadováno") {
+            [void]$bullets.Add("")
+            [void]$bullets.Add("### Fáze 3: Doménové funkce")
+            foreach ($x in @("- [ ] Doménové funkce podle specifikace", "- [ ] Napojení plateb a notifikací", "- [ ] Testy kritických toků")) { [void]$bullets.Add($x) }
+        }
+        [void]$bullets.Add("")
+        [void]$bullets.Add("### Fáze 4: Provoz a kvalita")
+        foreach ($x in @("- [ ] Observabilita a alerty", "- [ ] SEO, přístupnost a výkon", "- [ ] Zálohy a obnova", "- [ ] Dokumentace a onboarding")) { [void]$bullets.Add($x) }
+        $plan = "# Plán projektu: $projName`n`nDoména: **$($vals.AppDomain)**`n`nStack: $($vals.Fe), $($vals.Be), $($vals.DbStrategy)`n`nFáze uprav podle skutečných priorit.`n`n" + ($bullets -join "`n") + "`n"
+        [void](Write-MergedFile (Join-Path $repoRoot "PROJECT_PLAN.md") $plan $false)
+        $writtenFiles += "PROJECT_PLAN.md"
+    }
+
+    if ($incContributing) {
+        $contrib = @"
+# Přispívání do projektu $projName
+
+## Postup
+1. Vytvoř větev s popisným názvem (například ``feat/kosik-slevy``).
+2. Proveď změnu včetně testů.
+3. Spusť lint, typovou kontrolu a testy.
+4. Otevři pull request a vyplň popis změny i dopadů.
+5. Po schválení a zeleném CI proveď merge.
+
+## Požadavky na pull request
+- Malý a soustředěný na jednu věc.
+- Zelené CI.
+- Popis: co se změnilo, proč a jaké to má dopady.
+- U změny databáze i postup migrace a návratu.
+
+## Konvence commitů
+Používej konvenční formát: ``typ(oblast): popis`` (například ``fix(api): validace e-mailu``).
+Typy: ``feat``, ``fix``, ``docs``, ``refactor``, ``test``, ``chore``.
+
+## Co nikdy nedělat
+- Necommituj tajemství, klíče ani soubory ``.env``.
+- Nepřidávej závislosti bez dohody.
+- Nevypínej testy ani kontroly, abys prošel.
+"@
+        [void](Write-MergedFile (Join-Path $repoRoot "CONTRIBUTING.md") $contrib $false)
+        $writtenFiles += "CONTRIBUTING.md"
+    }
+
+    if ($incManifest) {
+        $agenticDir = Join-Path $repoRoot ".agentic"
+        $manifestObj = [ordered]@{
+            project = [ordered]@{ name = $projName; domain = $vals.AppDomain; architecture = "$($vals.Arch) - $($vals.ArchType)" }
+            tech_stack = [ordered]@{ frontend = "$($vals.Fe) + $($vals.Css)"; backend = $vals.Be; database = "$($vals.DbStrategy) + $($vals.Orm)"; auth = $vals.AuthType; deployment = $vals.Deploy }
+            agent_rules = [ordered]@{
+                hard_rules = @("Striktni typy, zadne any", "Zadny napevno zadany text v komponentach", "Tajemstvi pouze v prostredi, nikdy v kodu", "Kazda nova funkce ma test")
+                workflow = @("Precti instrukce", "Prozkoumej kod", "Nejmensi funkcni zmena", "Testy", "Lint a typova kontrola", "Shrnuti a dopady")
+            }
+            constraints = [ordered]@{ never_modify_structure = $true; never_add_undeclared_dependencies = $true; never_commit_secrets = $true }
+            links = [ordered]@{ instructions = ".github/copilot-instructions.md"; agents = "AGENTS.md"; setup = ".github/workflows/copilot-setup-steps.yml"; project_plan = "PROJECT_PLAN.md" }
+        }
+        if (-not (Test-Path $agenticDir)) { New-Item -ItemType Directory -Path $agenticDir | Out-Null }
+        [System.IO.File]::WriteAllText((Join-Path $agenticDir "manifest.json"), ($manifestObj | ConvertTo-Json -Depth 6), (New-Object System.Text.UTF8Encoding $false))
+        $writtenFiles += ".agentic/manifest.json"
     }
 
     [System.Windows.Forms.MessageBox]::Show(
